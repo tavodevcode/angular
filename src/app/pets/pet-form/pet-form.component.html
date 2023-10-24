@@ -1,0 +1,173 @@
+<div
+  id="pets-drawer"
+  class="fixed top-0 right-0 z-50 h-screen p-4 overflow-y-auto transition-transform translate-x-full bg-white w-3/4 md:w-1/3 dark:bg-gray-800"
+  tabindex="-1"
+  aria-labelledby="pets-drawer-labe"
+>
+  <div class="w-full h-auto">
+    <h5
+      id="pets-drawer-labe"
+      class="inline-flex items-center mb-4 text-base font-semibold text-gray-500 dark:text-gray-400"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="w-6 h-6 mr-2"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 01-2.25 2.25M16.5 7.5V18a2.25 2.25 0 002.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 002.25 2.25h13.5M6 7.5h3v3H6v-3z"
+        />
+      </svg>
+      {{ isEdit ? 'Editar mascota' : 'Nueva mascota' }}
+    </h5>
+    <button
+      type="button"
+      data-drawer-hide="pets-drawer"
+      aria-controls="pets-drawer"
+      class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 absolute top-2.5 right-2.5 inline-flex items-center justify-center dark:hover:bg-gray-600 dark:hover:text-white"
+      (click)="handleReset()"
+    >
+      <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+        <path
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+        />
+      </svg>
+      <span class="sr-only">Close menu</span>
+    </button>
+  </div>
+
+  <form [formGroup]="productForm" (submit)="!loading && (isEdit ? handleUpdate() : handleSubmit())" class="mb-6">
+    <div class="mb-6">
+      <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nombre</label>
+      <input
+        type="text"
+        id="name"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        placeholder="Apple Keynote"
+        [ngClass]="{
+          'border-red-500 focus:ring-red-500 focus:border-red-500': validateInput(name!)
+        }"
+        formControlName="name"
+        [value]="pet?.name"
+      />
+
+      <div *ngIf="validateInput(name!)">
+        <span class="text-sm text-red-600 pt-2" *ngIf="name?.errors?.['required']">El nombre es requerido!</span>
+      </div>
+    </div>
+    <div class="mb-6">
+      <label for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Descripcion</label>
+      <textarea
+        id="description"
+        rows="4"
+        class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        placeholder="Write event description..."
+        [ngClass]="{
+          'border-red-500 focus:ring-red-500 focus:border-red-500': validateInput(description!)
+        }"
+        formControlName="description"
+        [value]="pet?.description"
+      ></textarea>
+
+      <div *ngIf="validateInput(description!)">
+        <span class="text-sm text-red-600 pt-2" *ngIf="description!.errors?.['required']">
+          La descripcion es requerido!
+        </span>
+      </div>
+    </div>
+    <div class="mb-6">
+      <label for="type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tipo</label>
+      <input
+        type="text"
+        id="type"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        placeholder="Apple Keynote"
+        [ngClass]="{
+          'border-red-500 focus:ring-red-500 focus:border-red-500': validateInput(type!)
+        }"
+        formControlName="type"
+        [value]="pet?.type"
+      />
+      <div *ngIf="validateInput(type!)">
+        <span class="text-sm text-red-600 pt-2" *ngIf="type!.errors?.['required']">
+          El tipo de mascota es requerido!
+        </span>
+      </div>
+    </div>
+    <div class="mb-6">
+      <label for="image_url" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Image</label>
+      <input
+        type="text"
+        id="image_url"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        placeholder="Apple Keynote"
+        [ngClass]="{
+          'border-red-500 focus:ring-red-500 focus:border-red-500': validateInput(image_url!)
+        }"
+        formControlName="image_url"
+        [value]="pet?.image_url"
+      />
+      <div *ngIf="validateInput(image_url!)">
+        <span class="text-sm text-red-600 pt-2" *ngIf="image_url!.errors?.['required']">La imagen es requerida!</span>
+      </div>
+    </div>
+
+    <button
+      type="submit"
+      class="text-white justify-center flex items-center bg-blue-700 hover:bg-blue-800 w-full focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+      [ngClass]="{ 'bg-green-700 hover:bg-green-800': isEdit }"
+      *ngIf="!loading; else btnLoading"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="w-4 h-4 mr-2"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M3.375 19.5h17.25m-17.25 0a1.125 1.125 0 01-1.125-1.125M3.375 19.5h7.5c.621 0 1.125-.504 1.125-1.125m-9.75 0V5.625m0 12.75v-1.5c0-.621.504-1.125 1.125-1.125m18.375 2.625V5.625m0 12.75c0 .621-.504 1.125-1.125 1.125m1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125m0 3.75h-7.5A1.125 1.125 0 0112 18.375m9.75-12.75c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125m19.5 0v1.5c0 .621-.504 1.125-1.125 1.125M2.25 5.625v1.5c0 .621.504 1.125 1.125 1.125m0 0h17.25m-17.25 0h7.5c.621 0 1.125.504 1.125 1.125M3.375 8.25c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125m17.25-3.75h-7.5c-.621 0-1.125.504-1.125 1.125m8.625-1.125c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125m-17.25 0h7.5m-7.5 0c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125M12 10.875v-1.5m0 1.5c0 .621-.504 1.125-1.125 1.125M12 10.875c0 .621.504 1.125 1.125 1.125m-2.25 0c.621 0 1.125.504 1.125 1.125M13.125 12h7.5m-7.5 0c-.621 0-1.125.504-1.125 1.125M20.625 12c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125m-17.25 0h7.5M12 14.625v-1.5m0 1.5c0 .621-.504 1.125-1.125 1.125M12 14.625c0 .621.504 1.125 1.125 1.125m-2.25 0c.621 0 1.125.504 1.125 1.125m0 1.5v-1.5m0 0c0-.621.504-1.125 1.125-1.125m0 0h7.5"
+        />
+      </svg>
+      {{ isEdit ? 'Editar mascota' : 'Añadir mascota' }}
+    </button>
+  </form>
+</div>
+
+<ng-template #btnLoading>
+  <button
+    class="text-white justify-center flex items-center bg-blue-700 hover:bg-blue-800 w-full focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+    [ngClass]="{ 'opacity-50 cursor-auto': loading, 'bg-green-700 hover:bg-green-800': isEdit }"
+  >
+    <svg
+      aria-hidden="true"
+      role="status"
+      class="inline w-4 h-4 mr-3 text-white animate-spin"
+      viewBox="0 0 100 101"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+        fill="#E5E7EB"
+      />
+      <path
+        d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+        fill="currentColor"
+      />
+    </svg>
+    Loading...
+  </button>
+</ng-template>
