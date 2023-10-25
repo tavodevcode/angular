@@ -16,3 +16,12 @@ export interface CreatePetInput {
   create_at: string
   update_at: string
 }
+
+export interface UpdatePetInput {
+  name?: string
+  description?: string
+  type?: string
+  image_url?: string
+  create_at?: string
+  update_at?: string
+}
